@@ -4,11 +4,12 @@ import "./index.css";
 import App from "./components/App";
 import * as serviceWorker from "./serviceWorker";
 import axe from "@axe-core/react";
+import Firebase, { FirebaseContext } from "./components/Firebase";
 
 ReactDOM.render(
-  <React.StrictMode>
+  <FirebaseContext.Provider value={new Firebase()}>
     <App />
-  </React.StrictMode>,
+  </FirebaseContext.Provider>,
   document.getElementById("root")
 );
 if (process.env.NODE_ENV !== "production") {
