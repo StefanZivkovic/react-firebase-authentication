@@ -1,9 +1,10 @@
 import React from "react";
-import { Typography } from "@material-ui/core";
 
-const SignOut = () => (
-  <div>
-    <Typography>SignOut</Typography>
-  </div>
+import { withFirebase } from "../Firebase";
+
+const SignOutButton = ({ firebase }) => (
+  <button type="button" onClick={firebase.doSignOut}>
+    Sign out
+  </button>
 );
-export default SignOut;
+export default withFirebase(SignOutButton);
