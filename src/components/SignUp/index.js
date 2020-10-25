@@ -4,7 +4,6 @@ import { withFirebase } from "../Firebase";
 import "../../css/signup.css";
 
 import * as ROUTES from "../../constants/routes";
-import { InputLabel } from "@material-ui/core";
 
 const SignUpPage = () => (
   <div>

@@ -1,9 +1,4 @@
-import React from "react";
-import { Typography } from "@material-ui/core";
+import AuthUserContext from "./context";
+import withAuthentication from "./withAuthentication";
 
-const Session = () => (
-  <div>
-    <Typography component="h1">Session</Typography>
-  </div>
-);
-export default Session;
+export { AuthUserContext, withAuthentication };
