@@ -28,6 +28,9 @@ const NavigationAuth = () => (
       <Link data-testid="account" to={ROUTES.ACCOUNT}>
         Account
       </Link>
+      <li>
+        <Link to={ROUTES.ADMIN}>Admin</Link>
+      </li>
     </li>
     <li>
       <SignOutButton />
