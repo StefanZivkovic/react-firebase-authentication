@@ -1,9 +1,11 @@
 import React from "react";
-import { Typography } from "@material-ui/core";
+import { withAuthorization } from "../Session";
 
-const Home = () => (
+const HomePage = () => (
   <div>
-    <Typography component="h1">Home</Typography>
+    <h1>Home Page</h1>
+    <p>The Home Page is accessible by every signed in user.</p>
   </div>
 );
-export default Home;
+const condition = (authUser) => !!authUser;
+export default withAuthorization(condition)(HomePage);
