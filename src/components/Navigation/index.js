@@ -19,47 +19,53 @@ const Navigation = () => (
     </AuthUserContext.Consumer>
   </div>
 );
-const NavigationAuth = ({authUser}) => (
-  <ul>
-    <li>
-      <Link data-testid='landing' to={ROUTES.LANDING}>
-        Landing
-      </Link>
-    </li>
-    <li>
-      <Link data-testid='home' to={ROUTES.HOME}>
-        Home
-      </Link>
-    </li>
-    <li>
-      <Link data-testid='account' to={ROUTES.ACCOUNT}>
-        Account
-      </Link>
-    </li>
-    {!!authUser.roles[ROLES.ADMIN] && (
+const NavigationAuth = ({authUser}) => {
+  console.log('navigation auth');
+  return (
+    <ul>
       <li>
-        <Link to={ROUTES.ADMIN}>Admin</Link>
+        <Link data-testid='landing' to={ROUTES.LANDING}>
+          Landing
+        </Link>
       </li>
-    )}
-    <li>
-      <SignOutButton />
-    </li>
-  </ul>
-);
+      <li>
+        <Link data-testid='home' to={ROUTES.HOME}>
+          Home
+        </Link>
+      </li>
+      <li>
+        <Link data-testid='account' to={ROUTES.ACCOUNT}>
+          Account
+        </Link>
+      </li>
+      {!!authUser.roles[ROLES.ADMIN] && (
+        <li>
+          <Link to={ROUTES.ADMIN}>Admin</Link>
+        </li>
+      )}
+      <li>
+        <SignOutButton />
+      </li>
+    </ul>
+  );
+};
 
-const NavigationNonAuth = () => (
-  <ul>
-    <li>
-      <Link data-testid='signin' to={ROUTES.SIGN_IN}>
-        Sign In
-      </Link>
-    </li>
-    <li>
-      <Link data-testid='landing' to={ROUTES.LANDING}>
-        Landing
-      </Link>
-    </li>
-  </ul>
-);
+const NavigationNonAuth = () => {
+  console.log('navigation non auth');
+  return (
+    <ul>
+      <li>
+        <Link data-testid='signin' to={ROUTES.SIGN_IN}>
+          Sign In
+        </Link>
+      </li>
+      <li>
+        <Link data-testid='landing' to={ROUTES.LANDING}>
+          Landing
+        </Link>
+      </li>
+    </ul>
+  );
+};
 
 export default Navigation;
