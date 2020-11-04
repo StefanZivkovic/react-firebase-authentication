@@ -17,6 +17,9 @@ class Firebase {
 
     this.auth = app.auth();
     this.db = app.database();
+
+    this.googleProvider = new app.auth.GoogleAuthProvider();
+    this.facebookProvider = new app.auth.FacebookAuthProvider();
   }
 
   doCreateUserWithEmailAndPassword = (email, password) => {
@@ -25,6 +28,9 @@ class Firebase {
   doSignInWithEmailAndPassword = (email, password) => {
     return this.auth.signInWithEmailAndPassword(email, password);
   };
+  doSignInWithGoogle = () => this.auth.signInWithPopup(this.googleProvider);
+  doSignInWithFacebook = () => this.auth.signInWithPopup(this.facebookProvider);
+
   doSignOut = () => {
     this.auth.signOut();
   };
@@ -36,7 +42,6 @@ class Firebase {
 
   onAuthUserListener = (next, fallback) =>
     this.auth.onAuthStateChanged((authUser) => {
-      console.log('[withAuth/withAuthorization] authuser', authUser);
       if (authUser) {
         this.user(authUser.uid)
           .once('value')

@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import {compose} from 'recompose';
-import {withFirebase} from '../Firebase';
+
 import {withAuthorization} from '../Session';
 import * as ROLES from '../../constants/roles';
 
@@ -68,7 +67,6 @@ const UserList = ({users}) => (
 );
 
 const condition = (authUser) => {
-  console.log('role,', authUser, authUser?.roles);
   return authUser && !!authUser.roles[ROLES.ADMIN];
 };
 
