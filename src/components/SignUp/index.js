@@ -1,9 +1,10 @@
-import React, { Component } from "react";
-import { Link, withRouter } from "react-router-dom";
-import { withFirebase } from "../Firebase";
-import "../../css/signup.css";
+import React, {Component} from 'react';
+import {Link, withRouter} from 'react-router-dom';
+import {withFirebase} from '../Firebase';
+import '../../css/signup.css';
 
-import * as ROUTES from "../../constants/routes";
+import * as ROUTES from '../../constants/routes';
+import * as ROLES from '../../constants/roles';
 
 const SignUpPage = () => (
   <div>
@@ -12,19 +13,26 @@ const SignUpPage = () => (
   </div>
 );
 const INITIAL_STATE = {
-  username: "",
-  email: "",
-  passwordOne: "",
-  passwordTwo: "",
+  username: '',
+  email: '',
+  passwordOne: '',
+  passwordTwo: '',
+  isAdmin: false,
   error: null,
 };
 class SignUpFormBase extends Component {
-  constructor({ props }) {
+  constructor({props}) {
     super(props);
-    this.state = { ...INITIAL_STATE };
+    this.state = {...INITIAL_STATE};
   }
   onSubmit = (event) => {
-    const { username, email, passwordOne } = this.state;
+    const {username, email, passwordOne, isAdmin} = this.state;
+    const roles = {};
+
+    if (isAdmin) {
+      roles[ROLES.ADMIN] = ROLES.ADMIN;
+    }
+
     this.props.firebase
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then((authUser) => {
@@ -32,78 +40,98 @@ class SignUpFormBase extends Component {
         return this.props.firebase.user(authUser.user.uid).set({
           username,
           email,
+          roles,
         });
       })
-      .then((authUser) => {
-        this.setState({ ...INITIAL_STATE });
+      .then(() => {
+        this.setState({...INITIAL_STATE});
         this.props.history.push(ROUTES.HOME);
       })
       .catch((error) => {
-        console.log("error", error);
-        this.setState({ error });
+        console.log('error', error);
+        this.setState({error});
       });
     event.preventDefault();
   };
   onChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
+    this.setState({[event.target.name]: event.target.value});
+  };
+  onChangeCheckbox = (event) => {
+    this.setState({[event.target.name]: event.target.checked});
   };
   render() {
-    const { username, email, passwordOne, passwordTwo, error } = this.state;
+    const {
+      username,
+      email,
+      passwordOne,
+      passwordTwo,
+      isAdmin,
+      error,
+    } = this.state;
     const isInvalid =
       passwordOne !== passwordTwo ||
-      passwordOne === "" ||
-      email === "" ||
-      username === "";
+      passwordOne === '' ||
+      email === '' ||
+      username === '';
 
     return (
       <>
         <form onSubmit={this.onSubmit}>
           <input
-            name="username"
+            name='username'
             value={username}
             onChange={this.onChange}
-            type="text"
-            aria-label="Full Name"
-            placeholder="Full Name"
-            aria-describedby="usernameHint"
+            type='text'
+            aria-label='Full Name'
+            placeholder='Full Name'
+            aria-describedby='usernameHint'
           />
-          <p className="hint hidden" id="usernameHint">
+          <p className='hint hidden' id='usernameHint'>
             Your username cannot contain punctuation
           </p>
           <br />
 
           <input
-            name="email"
+            name='email'
             value={email}
             onChange={this.onChange}
-            type="Text"
-            placeholder="Email Address"
-            aria-label="Email Address"
+            type='Text'
+            placeholder='Email Address'
+            aria-label='Email Address'
           />
           <br />
           <input
-            name="passwordOne"
+            name='passwordOne'
             value={passwordOne}
             onChange={this.onChange}
-            type="password"
-            placeholder="Password"
-            aria-label="Password"
+            type='password'
+            placeholder='Password'
+            aria-label='Password'
           />
           <br />
           <input
-            name="passwordTwo"
+            name='passwordTwo'
             value={passwordTwo}
             onChange={this.onChange}
-            type="password"
-            placeholder="Confirm password"
-            aria-label="Confirm password"
+            type='password'
+            placeholder='Confirm password'
+            aria-label='Confirm password'
           />
           <br />
-          <div aria-live="assertive" id="message"></div>
-          <button disabled={isInvalid} type="submit">
+          <div aria-live='assertive' id='message'></div>
+          <label>
+            Admin:
+            <input
+              name='isAdmin'
+              type='checkbox'
+              checked={isAdmin}
+              onChange={this.onChangeCheckbox}
+            />
+          </label>
+          <button disabled={isInvalid} type='submit'>
             Sign Up
           </button>
-          {error && <p className="error">{error.message}</p>}
+          {error && <p className='error'>{error.message}</p>}
         </form>
       </>
     );
@@ -116,4 +144,4 @@ const SignUpLink = () => (
 );
 const SignUpForm = withRouter(withFirebase(SignUpFormBase));
 export default SignUpPage;
-export { SignUpForm, SignUpLink };
+export {SignUpForm, SignUpLink};

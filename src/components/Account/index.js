@@ -1,9 +1,9 @@
-import React from "react";
-import { AuthUserContext, withAuthorization } from "../Session";
+import React from 'react';
+import {AuthUserContext, withAuthorization} from '../Session';
 
-import { PasswordForgetForm } from "../PasswordForget";
-import PasswordChangeForm from "../PasswordChange";
-
+import {PasswordForgetForm} from '../PasswordForget';
+import PasswordChangeForm from '../PasswordChange';
+import * as ROLES from '../../constants/roles';
 const AccountPage = () => (
   <AuthUserContext.Consumer>
     {(authUser) => (
@@ -15,6 +15,6 @@ const AccountPage = () => (
     )}
   </AuthUserContext.Consumer>
 );
-const condition = (authUser) => !!authUser;
+const condition = (authUser) => authUser && !!authUser.roles[ROLES.ADMIN];
 
 export default withAuthorization(condition)(AccountPage);
