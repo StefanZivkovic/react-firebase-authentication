@@ -4,8 +4,25 @@ import {withFirebase} from '../Firebase';
 
 import {PasswordForgetForm} from '../PasswordForget';
 import PasswordChangeForm from '../PasswordChange';
-import * as ROLES from '../../constants/roles';
 
+const SIGN_IN_METHODS = [
+  {
+    id: 'password',
+    provider: null,
+  },
+  {
+    id: 'google.com',
+    provider: 'googleProvider',
+  },
+  {
+    id: 'facebook.com',
+    provider: 'facebookProvider',
+  },
+  {
+    id: 'twitter.com',
+    provider: 'twitterProvider',
+  },
+];
 class DefaultLoginToggle extends React.Component {
   constructor(props) {
     super(props);
@@ -15,21 +32,31 @@ class DefaultLoginToggle extends React.Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-
+    console.log('[DefaultLoginToggle] on submit: ', this.state.passwordOne);
     this.props.onLink(this.state.passwordOne);
     this.setState({passwordOne: '', passwordTwo: ''});
   };
 
   onChange = (event) => {
+    console.log(
+      '[DefaultLoginToggle] on change: ',
+      event.target.name,
+      event.target.value
+    );
     this.setState({[event.target.name]: event.target.value});
   };
 
   render() {
     const {onlyOneLeft, isEnabled, signInMethod, onUnlink} = this.props;
-
     const {passwordOne, passwordTwo} = this.state;
-
     const isInvalid = passwordOne !== passwordTwo || passwordOne === '';
+    console.log(
+      '[DefaultLoginToggle] render: ',
+      onlyOneLeft,
+      isEnabled,
+      signInMethod,
+      onUnlink
+    );
 
     return isEnabled ? (
       <button
@@ -42,6 +69,7 @@ class DefaultLoginToggle extends React.Component {
     ) : (
       <form onSubmit={this.onSubmit}>
         <input
+          aria-label='passwordOne'
           name='passwordOne'
           value={passwordOne}
           onChange={this.onChange}
@@ -49,6 +77,7 @@ class DefaultLoginToggle extends React.Component {
           placeholder='New Password'
         />
         <input
+          aria-label='passwordTwo'
           name='passwordTwo'
           value={passwordTwo}
           onChange={this.onChange}
@@ -84,25 +113,6 @@ const SocialLoginToggle = ({
     </button>
   );
 
-const SIGN_IN_METHODS = [
-  {
-    id: 'password',
-    provider: null,
-  },
-  {
-    id: 'google.com',
-    provider: 'googleProvider',
-  },
-  {
-    id: 'facebook.com',
-    provider: 'facebookProvider',
-  },
-  {
-    id: 'twitter.com',
-    provider: 'twitterProvider',
-  },
-];
-
 class LoginManagementBase extends React.Component {
   constructor(props) {
     super(props);
@@ -115,15 +125,23 @@ class LoginManagementBase extends React.Component {
   fetchSignInMethods = () => {
     this.props.firebase.auth
       .fetchSignInMethodsForEmail(this.props.authUser.email)
-      .then((activeSignInMethods) =>
-        this.setState({activeSignInMethods, error: null})
-      )
+      .then((activeSignInMethods) => {
+        console.log(
+          '[LoginManagementBase] active sign in methods: ',
+          activeSignInMethods
+        );
+        this.setState({activeSignInMethods, error: null});
+      })
       .catch((error) => this.setState({error}));
   };
   componentDidMount() {
     this.fetchSignInMethods();
   }
   onSocialLoginLink = (provider) => {
+    console.log(
+      '[LoginManagementBase] current user: ',
+      this.props.firebase.auth.currentUser
+    );
     this.props.firebase.auth.currentUser
       .linkWithPopup(this.props.firebase[provider])
       .then(this.fetchSignInMethods)
@@ -141,7 +159,7 @@ class LoginManagementBase extends React.Component {
       this.props.authUser.email,
       password
     );
-
+    console.log('[LoginManagementBase] credentials: ', credential);
     this.props.firebase.auth.currentUser
       .linkAndRetrieveDataWithCredential(credential)
       .then(this.fetchSignInMethods)
@@ -200,6 +218,6 @@ const AccountPage = () => (
     )}
   </AuthUserContext.Consumer>
 );
-const condition = (authUser) => authUser && !!authUser.roles[ROLES.ADMIN];
+const condition = (authUser) => !!authUser;
 
 export default withAuthorization(condition)(AccountPage);

@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
+import {compose} from 'recompose';
 
 import {withAuthorization} from '../Session';
 import * as ROLES from '../../constants/roles';
+import {withFirebase} from '../Firebase';
 
 class AdminPage extends Component {
   constructor(props) {
@@ -18,7 +20,7 @@ class AdminPage extends Component {
 
     this.props.firebase.users().on('value', (snapshot) => {
       const usersObject = snapshot.val();
-      console.log('users object', usersObject);
+
       const usersList = Object.keys(usersObject).map((key) => ({
         ...usersObject[key],
         uid: key,
@@ -66,10 +68,9 @@ const UserList = ({users}) => (
   </ul>
 );
 
-const condition = (authUser) => {
-  return authUser && !!authUser.roles[ROLES.ADMIN];
-};
+const condition = (authUser) =>
+  authUser && authUser.roles.includes(ROLES.ADMIN);
 
-// export default compose(withAuthorization(condition), withFirebase)(AdminPage);
+export default compose(withAuthorization(condition), withFirebase)(AdminPage);
 
-export default withAuthorization(condition)(AdminPage);
+// export default withAuthorization(condition)(withFirebase)(AdminPage);

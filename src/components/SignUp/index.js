@@ -40,22 +40,27 @@ class SignUpFormBase extends Component {
     const roles = {};
 
     if (isAdmin) {
-      roles[ROLES.ADMIN] = ROLES.ADMIN;
+      roles.push(ROLES.ADMIN);
     }
 
     this.props.firebase
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then((authUser) => {
         // Create a user in your Firebase realtime database
-        return this.props.firebase.user(authUser.user.uid).set({
-          username,
-          email,
-          roles,
-        });
-      })
-      .then(() => {
-        this.setState({...INITIAL_STATE});
-        this.props.history.push(ROUTES.HOME);
+        return this.props.firebase
+          .user(authUser.user.uid)
+          .set({
+            username,
+            email,
+            roles,
+          })
+          .then(() => {
+            this.setState({...INITIAL_STATE});
+            this.props.history.push(ROUTES.HOME);
+          })
+          .catch((error) => {
+            this.setState({error});
+          });
       })
       .catch((error) => {
         if (error.code === ERROR_CODE_ACCOUNT_EXISTS) {
@@ -87,65 +92,63 @@ class SignUpFormBase extends Component {
       username === '';
 
     return (
-      <>
-        <form onSubmit={this.onSubmit}>
-          <input
-            name='username'
-            value={username}
-            onChange={this.onChange}
-            type='text'
-            aria-label='Full Name'
-            placeholder='Full Name'
-            aria-describedby='usernameHint'
-          />
-          <p className='hint hidden' id='usernameHint'>
-            Your username cannot contain punctuation
-          </p>
-          <br />
+      <form onSubmit={this.onSubmit}>
+        <input
+          name='username'
+          value={username}
+          onChange={this.onChange}
+          type='text'
+          aria-label='Full Name'
+          placeholder='Full Name'
+          aria-describedby='usernameHint'
+        />
+        <p className='hint hidden' id='usernameHint'>
+          Your username cannot contain punctuation
+        </p>
+        <br />
 
+        <input
+          name='email'
+          value={email}
+          onChange={this.onChange}
+          type='Text'
+          placeholder='Email Address'
+          aria-label='Email Address'
+        />
+        <br />
+        <input
+          name='passwordOne'
+          value={passwordOne}
+          onChange={this.onChange}
+          type='password'
+          placeholder='Password'
+          aria-label='Password'
+        />
+        <br />
+        <input
+          name='passwordTwo'
+          value={passwordTwo}
+          onChange={this.onChange}
+          type='password'
+          placeholder='Confirm password'
+          aria-label='Confirm password'
+        />
+        <br />
+        <div aria-live='assertive' id='message'></div>
+        <label>
+          Admin:
           <input
-            name='email'
-            value={email}
-            onChange={this.onChange}
-            type='Text'
-            placeholder='Email Address'
-            aria-label='Email Address'
+            name='isAdmin'
+            type='checkbox'
+            checked={isAdmin}
+            onChange={this.onChangeCheckbox}
           />
-          <br />
-          <input
-            name='passwordOne'
-            value={passwordOne}
-            onChange={this.onChange}
-            type='password'
-            placeholder='Password'
-            aria-label='Password'
-          />
-          <br />
-          <input
-            name='passwordTwo'
-            value={passwordTwo}
-            onChange={this.onChange}
-            type='password'
-            placeholder='Confirm password'
-            aria-label='Confirm password'
-          />
-          <br />
-          <div aria-live='assertive' id='message'></div>
-          <label>
-            Admin:
-            <input
-              name='isAdmin'
-              type='checkbox'
-              checked={isAdmin}
-              onChange={this.onChangeCheckbox}
-            />
-          </label>
-          <button disabled={isInvalid} type='submit'>
-            Sign Up
-          </button>
-          {error && <p className='error'>{error.message}</p>}
-        </form>
-      </>
+        </label>
+        <button disabled={isInvalid} type='submit'>
+          Sign Up
+        </button>
+        {error && <p className='error'>{error.message}</p>}
+      </form>
     );
   }
 }

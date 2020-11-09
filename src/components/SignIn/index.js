@@ -106,16 +106,22 @@ class SignInGoogleBase extends Component {
     this.props.firebase
       .doSignInWithGoogle()
       .then((socialAuthUser) => {
+        console.log('socialAuthUser', this.props.firebase.auth.currentUser);
         // Create a user in your Firebase Realtime Database too
-        return this.props.firebase.user(socialAuthUser.user.uid).set({
-          username: socialAuthUser.user.displayName,
-          email: socialAuthUser.user.email,
-          roles: {},
-        });
-      })
-      .then(() => {
-        this.setState({error: null});
-        this.props.history.push(ROUTES.HOME);
+        return this.props.firebase
+          .user(socialAuthUser.user.uid)
+          .set({
+            username: socialAuthUser.user.displayName,
+            email: socialAuthUser.user.email,
+            roles: [],
+          })
+          .then(() => {
+            this.setState({error: null});
+            this.props.history.push(ROUTES.HOME);
+          })
+          .catch((error) => {
+            this.setState({error});
+          });
       })
       .catch((error) => {
         if (error.code === ERROR_CODE_ACCOUNT_EXISTS) {
@@ -152,15 +158,20 @@ class SignInFacebookBase extends Component {
       .doSignInWithFacebook()
       .then((socialAuthUser) => {
         // Create a user in your Firebase Realtime Database too
-        return this.props.firebase.user(socialAuthUser.user.uid).set({
-          username: socialAuthUser.additionalUserInfo.profile.name,
-          email: socialAuthUser.additionalUserInfo.profile.email,
-          roles: {},
-        });
-      })
-      .then(() => {
-        this.setState({error: null});
-        this.props.history.push(ROUTES.HOME);
+        return this.props.firebase
+          .user(socialAuthUser.user.uid)
+          .set({
+            username: socialAuthUser.additionalUserInfo.profile.name,
+            email: socialAuthUser.additionalUserInfo.profile.email,
+            roles: [],
+          })
+          .then(() => {
+            this.setState({error: null});
+            this.props.history.push(ROUTES.HOME);
+          })
+          .catch((error) => {
+            this.setState({error});
+          });
       })
       .catch((error) => {
         if (error.code === ERROR_CODE_ACCOUNT_EXISTS) {

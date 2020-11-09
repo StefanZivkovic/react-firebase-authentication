@@ -20,7 +20,6 @@ const Navigation = () => (
   </div>
 );
 const NavigationAuth = ({authUser}) => {
-  console.log('navigation auth');
   return (
     <ul>
       <li>
@@ -51,7 +50,6 @@ const NavigationAuth = ({authUser}) => {
 };
 
 const NavigationNonAuth = () => {
-  console.log('navigation non auth');
   return (
     <ul>
       <li>

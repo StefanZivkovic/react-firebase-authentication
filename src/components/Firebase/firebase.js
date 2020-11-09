@@ -43,6 +43,7 @@ class Firebase {
 
   onAuthUserListener = (next, fallback) =>
     this.auth.onAuthStateChanged((authUser) => {
+      console.log('on auth state changed listener', authUser);
       if (authUser) {
         this.user(authUser.uid)
           .once('value')
